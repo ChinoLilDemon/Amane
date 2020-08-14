@@ -23,12 +23,11 @@ export default new class extends Command{
                 embed.addField('Framework', 'discord.js & node-canvas', true);
                 embed.addField('Invite Me', `[click here](${v[0]})`);
                 embed.addField('Join our Server', `[click here](${v[1]})`);
-                let embed_copy = embed;
         
                 embed.addField('Ping', 'pinging...');
                 msg.channel.send(embed).then(m=>{
-                    embed_copy.addField('Ping', `${m.createdTimestamp - msg.createdTimestamp}ms`);
-                    m.edit(embed_copy);
+                    embed.fields[embed.fields.length - 1].value = `${m.createdTimestamp - msg.createdTimestamp}ms`;
+                    m.edit(embed);
                 })
         })
     }
