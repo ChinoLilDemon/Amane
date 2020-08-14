@@ -14,12 +14,12 @@ export var command_aliases = new discord.Collection<string, string>();
 var client = new discord.Client();
 
 function hasPrefix(msg: discord.Message, cb: (prefix: string)=>void){
-    var reg = new RegExp('^<@!'+client.user.id+'>').exec(msg.content);
+    var reg = new RegExp('^<@!'+client.user?.id+'>').exec(msg.content);
     if(reg){
         cb(reg[0]);
         return;
     }
-    if(msg.channel instanceof discord.GuildChannel){
+    if(msg.guild){
         db.findPrefix(msg.guild.id).then(v=>{
             if(v){
                 if(msg.content.startsWith(v.prefix)) cb(v.prefix);
@@ -55,7 +55,7 @@ client.on('ready',()=>{
             });
         })
     })
-    console.log(`${client.user.username} successfully started`);
+    console.log(`${client.user?.username} successfully started`);
 });
 
 client.on('message', (msg)=>{
@@ -64,6 +64,7 @@ client.on('message', (msg)=>{
     hasPrefix(msg, prefix=>{
         var args: string[] = msg.content.substr(prefix.length).trim().split(/\s+/);
         var cmd = args.shift();
+        if(!cmd) return;
         var cmdAlias = command_aliases.get(cmd.toLowerCase());
         if(cmdAlias) cmd = cmdAlias;
         var command = command_list.get(cmd.toLowerCase());

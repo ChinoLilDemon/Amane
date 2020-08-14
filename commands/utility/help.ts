@@ -12,8 +12,8 @@ export default new class extends Command {
             let embed = new discord.MessageEmbed();
             embed.setTitle(i.toUpperCase());
             var description = '';
-            client.command_categories.get(i).map(command_name=>{
-                description = description.concat(command_name + ' - ' + client.command_list.get(command_name).description);
+            client.command_categories.get(i)?.map(command_name=>{
+                description = description.concat(command_name + ' - ' + client.command_list.get(command_name)?.description);
             });
             embed.setDescription(description);
             promise_list.push(msg.author.send(embed));

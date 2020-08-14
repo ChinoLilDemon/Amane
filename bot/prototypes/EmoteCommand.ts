@@ -13,8 +13,8 @@ export default class extends Command{
     solotext: string;
     multitext: string;
     imageOnSolo: boolean;
-
-    folder_content_list: string[];
+    
+    folder_content_list: string[] = [];
 
     constructor(folder: string, aliases: string[], description: string, usage: string, solotext: string, multitext: string, imageOnSolo: boolean, nsfw = false){
         super();
@@ -38,9 +38,9 @@ export default class extends Command{
         return embed.attachFiles([attachment]).setImage(`attachment://${path.parse(this.folder_content_list[rng]).base}`);
     }
     exec(msg: discord.Message, cmd: string, args: string[], prefix?: string): void {
+        if(!msg.member) return;
         let embed = new discord.MessageEmbed;
-        let mention = msg.mentions.members.find(v => v.id != client.user.id);
-
+        let mention = msg.mentions.members?.find(v => v.id != client.user?.id);
         if(mention){
             embed.description = this.multitext.replace('[0]', msg.member.toString()).replace('[1]', mention.toString());
             embed = this.addImage(embed);
