@@ -17,7 +17,6 @@ export default new class extends Command{
                 embed.addField('Framework', 'discord.js & node-canvas', true);
                 embed.addField('Invite Me', `[click here](${v[0]})`);
                 embed.addField('Join our Server', `[click here](https://discord.gg/BqMJJEw)`);
-        
                 embed.addField('Ping', 'pinging...');
                 msg.channel.send(embed).then(m=>{
                     embed.fields[embed.fields.length - 1].value = `${m.createdTimestamp - msg.createdTimestamp}ms`;
