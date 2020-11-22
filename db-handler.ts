@@ -6,6 +6,8 @@ interface GuildPrefixData{
     prefix: string
 }
 
+//TODO: add ban_log_channel, kick_log_channel, msg_log_channel
+
 /**
  * @param id guild id
  * @param prefix prefix to insert
@@ -30,6 +32,11 @@ export function findPrefix(id: string): Promise<GuildPrefixData|undefined>{
     return db('guild_prefix').where({id}).first();
 }
 
+/**
+ * @description Changes the prefix for a guild
+ * @param id guild id
+ * @param prefix the new prefix
+ */
 export function changePrefix(id: string, prefix: string){
     return db('guild_prefix').where({id}).update({prefix});
 }

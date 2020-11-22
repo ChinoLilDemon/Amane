@@ -4,8 +4,10 @@ import path = require('path');
 import Command from './prototypes/Command';
 import * as db from '../db-handler';
 import config from '../configure';
+import {GuildSettingManager} from './guild-setting-manager';
+import {logger} from '../logger';
 
-
+export var guild_setting_manager: GuildSettingManager;
 
 export var command_categories = new discord.Collection<string, string[]>();
 export var command_list = new discord.Collection<string, Command>();
@@ -15,31 +17,15 @@ var client = new discord.Client();
 
 function hasPrefix(msg: discord.Message, cb: (prefix: string)=>void){
     var reg = new RegExp('^<@!'+client.user?.id+'>').exec(msg.content);
-    if(reg){
-        cb(reg[0]);
-        return;
-    }
-    if(msg.guild){
-        db.findPrefix(msg.guild.id).then(v=>{
-            if(v){
-                if(msg.content.startsWith(v.prefix)) cb(v.prefix);
-            }
-            else{
-                if(msg.content.startsWith(config.prefix)) cb(config.prefix);
-            }
-        })
-        .catch(()=>{
-            if (msg.content.startsWith(config.prefix)) cb(config.prefix);
-        });
-    }
-    else{
-        if (msg.content.startsWith(config.prefix)) cb(config.prefix);
-    }
+    var prefix = (msg.guild) 
+        ? guild_setting_manager.getPrefix(msg.guild.id) || config.prefix 
+        : config.prefix;
+    cb(prefix);
 }
 
 client.on('ready',()=>{
     // creating command list 
-    console.log('initialising command list...');
+    logger.info('initialising command list...');
     var cmd_dir = path.join(__dirname, '..', 'commands');
     fs.readdirSync(cmd_dir).map(v=>{
         var commands = new discord.Collection<string, Command>();
@@ -48,19 +34,19 @@ client.on('ready',()=>{
         command_categories.set(v, commands.keyArray());
         commands.map((value, key)=>{
             command_list.set(key, value);
-            console.log('initialised command : ' + key);
+            logger.info('initialised command : ' + key);
             value.aliases?.map(alias=>{
                 command_aliases.set(alias, key);
-                console.log('initialised alias : ' + alias);
+                logger.info('initialised alias : ' + alias);
             });
         })
     })
-    console.log(`${client.user?.username} successfully started`);
+    guild_setting_manager = new GuildSettingManager(client.guilds.cache.map(guild => guild.id ));
+    logger.info(`${client.user?.username} successfully started`);
 });
 
 client.on('message', (msg)=>{
     if(msg.author.bot) return;
-    console.log(msg.content);
     hasPrefix(msg, prefix=>{
         var args: string[] = msg.content.substr(prefix.length).trim().split(/\s+/);
         var cmd = args.shift();

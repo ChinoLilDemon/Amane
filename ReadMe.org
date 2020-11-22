@@ -40,8 +40,7 @@ Guild admins will be able to disable this feature if it is displeasing.
 The staff of groups will be able to disable any features as they please.
 *** TODO Music Commands
 We don't know by now if music features will only include a broadcast or music for every user, but we will try to give a decent quality.
-** Known Bugs
-*** Truncated Help pages.
-The command list doesn't look like it should right now and we noticed it soon enough.
-We will fix it at <2020-08-16 So>
+In any case this feature will only get into certified partners or servers of the Aciralith Network.
+*** TODO Language Packs
+We will integrate some nice language packs for other communities.
 

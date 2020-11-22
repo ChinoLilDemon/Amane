@@ -2,64 +2,67 @@ import Command from '../../bot/prototypes/Command';
 import * as discord from 'discord.js';
 import * as db from '../../db-handler';
 import config from '../../configure';
+import { guild_setting_manager } from '../../bot/client';
+import { dialogs } from '../../bot/dialog-handler';
 
-export default new class extends Command{
+export default new class extends Command {
     aliases: string[] = [];
-    description: string = "Changes the prefix for the Guild";
+    description: string = dialogs.get('en').prefix.description;
     usage: string = "*prefix [prefix] - setting prefix\n*prefix reset - resetting prefix to default";
-    constructor(){
+    constructor() {
         super();
         this.permissions = "ADMINISTRATOR";
     }
     exec(msg: discord.Message, cmd: string, args: string[], prefix?: string): void {
-        if(msg.guild){
-            db.findPrefix(msg.guild.id).then(v=>{
-                if (args.length > 0) {
-                    if (args[0].length > 3) {
-                        if(args[0] == 'reset'){
-                            //@ts-ignore
-                            db.removePrefix(msg.guild.id).then(v=>{
-                                msg.reply('reseted the prefix for this guild, now using default prefix again.');
-                            })
-                            .catch(reason=>{
-                                msg.reply(`I wasn't able to reset the prefix to default`);
-                                console.log('prefix reset failed with reason: ' + reason);
-                            })
-                        }
-                        else
-                            msg.reply('i can only remember prefixes that are less than 3 characters long...');
-                        return;
-                    }
-                    if(v)
+        if (msg.guild) {
+            //@ts-ignore
+            var guild_prefix = guild_setting_manager.getPrefix(msg.guild?.id);
+
+            if (args.length > 0) {
+                if (args[0].length > 3) {
+                    if (args[0] == 'reset') {
                         //@ts-ignore
-                        db.changePrefix(msg.guild.id, args[0]).then(() => {
-                                msg.reply(`i successfully changed the prefix to "${args[0]}"`)
+                        guild_setting_manager.deletePrefix(msg.guild.id)
+                            .then(() => {
+                                msg.reply(dialogs.get('en').prefix.reset);
                             })
                             .catch(reason => {
-                                msg.reply(`i failed to change the prefix for this place.`);
-                                console.log(`Failed to change prefix with reason: ${reason}`);
-                            });
-                    else
-                        //@ts-ignore
-                        db.insertPrefix(msg.guild.id, args[0]).then(()=>{
-                                msg.reply(`i successfully changed the prefix to "${args[0]}"`)
+                                msg.reply(dialogs.get('en').prefix.reset_err);
                             })
-                            .catch(reason =>{
-                                msg.reply(`i failed to change the prefix for this place.`);
-                                console.log(`Failed to change prefix with reason: ${reason}`);
-                            });
-                }
-                else{
-                    if(v)
-                        msg.reply(`the prefix for this guild is ${v.prefix}`);
+                    }
                     else
-                        msg.reply(`my prefix is ${config.prefix}`)
+                        msg.reply(dialogs.get('en').prefix.new_prefix_to_long);
+                    return;
                 }
-            })
+                //@ts-ignore
+                guild_setting_manager.setPrefix(msg.guild?.id, args[0])
+                    .then(() => {
+                        //@ts-ignore
+                        msg.reply(
+                            (dialogs.get('en').prefix.change_successful as string)
+                            .replace(/\[prefix\]/g, args[0])
+                            );
+                    })
+                    .catch(reason => {
+                        msg.reply(dialogs.get('en').prefix.change_err);
+                    })
+            }
+            else {
+                if (guild_prefix)
+                    msg.reply(
+                        (dialogs.get('en').prefix.get_guild_prefix as string)
+                        .replace(/\[prefix\]/g, guild_prefix)
+                        );
+                else
+                    msg.reply(
+                        (dialogs.get('en').prefix.get_default_prefix as string)
+                        .replace(/\[prefix\]/g, config.prefix)
+                        )
+            }
         }
-        else{
-            msg.reply('This command can only be used in guilds')
+        else {
+            msg.reply(dialogs.get('en').exceptions.only_in_guilds)
         }
     }
-    
+
 }();
