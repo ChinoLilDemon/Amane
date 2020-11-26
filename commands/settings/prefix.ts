@@ -13,7 +13,7 @@ export default new class extends Command {
         super();
         this.permissions = "ADMINISTRATOR";
     }
-    exec(msg: discord.Message, cmd: string, args: string[], prefix?: string): void {
+    exec(msg: discord.Message, cmd: string, args: string[], prefix: string, language: string): void {
         if (msg.guild) {
             //@ts-ignore
             var guild_prefix = guild_setting_manager.getPrefix(msg.guild?.id);
@@ -24,14 +24,14 @@ export default new class extends Command {
                         //@ts-ignore
                         guild_setting_manager.deletePrefix(msg.guild.id)
                             .then(() => {
-                                msg.reply(dialogs.get('en').prefix.reset);
+                                msg.reply(dialogs.get(language).prefix.reset);
                             })
                             .catch(reason => {
-                                msg.reply(dialogs.get('en').prefix.reset_err);
+                                msg.reply(dialogs.get(language).prefix.reset_err);
                             })
                     }
                     else
-                        msg.reply(dialogs.get('en').prefix.new_prefix_to_long);
+                        msg.reply(dialogs.get(language).prefix.new_prefix_to_long);
                     return;
                 }
                 //@ts-ignore
@@ -39,23 +39,23 @@ export default new class extends Command {
                     .then(() => {
                         //@ts-ignore
                         msg.reply(
-                            (dialogs.get('en').prefix.change_successful as string)
+                            (dialogs.get(language).prefix.change_successful as string)
                             .replace(/\[prefix\]/g, args[0])
                             );
                     })
                     .catch(reason => {
-                        msg.reply(dialogs.get('en').prefix.change_err);
+                        msg.reply(dialogs.get(language).prefix.change_err);
                     })
             }
             else {
                 if (guild_prefix)
                     msg.reply(
-                        (dialogs.get('en').prefix.get_guild_prefix as string)
+                        (dialogs.get(language).prefix.get_guild_prefix as string)
                         .replace(/\[prefix\]/g, guild_prefix)
                         );
                 else
                     msg.reply(
-                        (dialogs.get('en').prefix.get_default_prefix as string)
+                        (dialogs.get(language).prefix.get_default_prefix as string)
                         .replace(/\[prefix\]/g, config.prefix)
                         )
             }

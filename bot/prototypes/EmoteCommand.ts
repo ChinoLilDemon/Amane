@@ -39,20 +39,20 @@ export default class extends Command{
         var attachment = new discord.MessageAttachment(this.folder_content_list[rng]);
         return embed.attachFiles([attachment]).setImage(`attachment://${path.parse(this.folder_content_list[rng]).base}`);
     }
-    exec(msg: discord.Message, cmd: string, args: string[], prefix?: string, language?: string): void {
+    exec(msg: discord.Message, cmd: string, args: string[], prefix: string, language: string): void {
         if(!msg.member) return;
         let embed = new discord.MessageEmbed;
         let mention = msg.mentions.members?.find(v => v.id != client.user?.id);
         if(mention){
-            embed.description = dialogs.get('en')[this.command_name].multi.replace('[member]', msg.member.toString()).replace('[mention]', mention.toString());
+            embed.description = dialogs.get(language)[this.command_name].multi.replace('[member]', msg.member.toString()).replace('[mention]', mention.toString());
             embed = this.addImage(embed);
         }
         else{
             if (this.imageOnSolo == false){ 
-                msg.channel.send(dialogs.get('en')[this.command_name].solo.replace('[member]', msg.member.toString()).trim().replace(/\s+/, ' '));
+                msg.channel.send(dialogs.get(language)[this.command_name].solo.replace('[member]', msg.member.toString()).trim().replace(/\s+/, ' '));
                 return;
             }
-            embed.description = dialogs.get('en')[this.command_name].solo.replace('[member]', msg.member.toString());
+            embed.description = dialogs.get(language)[this.command_name].solo.replace('[member]', msg.member.toString());
             embed = this.addImage(embed);
         }
 

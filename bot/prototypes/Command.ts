@@ -6,5 +6,5 @@ export default abstract class {
     abstract usage: string;
     permissions:  discord.PermissionResolvable = 0;
     nsfw: boolean = false;
-    abstract exec(msg: discord.Message, cmd: string, args: string[], prefix?: string, language?: string): void;
+    abstract exec(msg: discord.Message, cmd: string, args: string[], prefix: string, language: string): void;
 }

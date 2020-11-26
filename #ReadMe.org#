@@ -1,4 +1,4 @@
-#+AUTHOR: ChinoLilDemon#0001
+:#+AUTHOR: ChinoLilDemon#0001
 #+TITLE: Amane
 #+DATE: [2020-08-15 Sa]
 
@@ -25,7 +25,6 @@ Those features are not yet implemented and will come in future.
 *** TODO Leveling
 Leveling will be one of the core features of the bot.
 The leveling system should make the texting in discord guilds make more appealing
-x^2.8+log(x)*1000+300
 *** TODO Moderation
 Commands like ~ban~, ~kick~ and ~mute~ should be added since it, will be soon the only bot in the Aciralith Central discord.
 *** TODO Logging
@@ -44,5 +43,4 @@ We don't know by now if music features will only include a broadcast or music fo
 In any case this feature will only get into certified partners or servers of the Aciralith Network.
 *** TODO Language Packs
 We will integrate some nice language packs for other communities.
-
 

@@ -6,6 +6,7 @@ import * as db from '../db-handler';
 import config from '../configure';
 import {GuildSettingManager} from './guild-setting-manager';
 import {logger} from '../logger';
+import { dialogs } from './dialog-handler';
 
 export var guild_setting_manager: GuildSettingManager;
 
@@ -16,11 +17,10 @@ export var command_aliases = new discord.Collection<string, string>();
 var client = new discord.Client();
 
 function hasPrefix(msg: discord.Message, cb: (prefix: string)=>void){
-    var reg = new RegExp('^<@!'+client.user?.id+'>').exec(msg.content);
     var prefix = (msg.guild) 
         ? guild_setting_manager.getPrefix(msg.guild.id) || config.prefix 
         : config.prefix;
-    cb(prefix);
+    if(msg.content.startsWith(prefix)) cb(prefix);
 }
 
 client.on('ready',()=>{
@@ -48,6 +48,7 @@ client.on('ready',()=>{
 client.on('message', (msg)=>{
     if(msg.author.bot) return;
     hasPrefix(msg, prefix=>{
+        let lang = 'en';
         var args: string[] = msg.content.substr(prefix.length).trim().split(/\s+/);
         var cmd = args.shift();
         if(!cmd) return;
@@ -59,11 +60,11 @@ client.on('message', (msg)=>{
                 (msg.channel instanceof discord.GuildChannel && msg.channel.nsfw) || 
                 msg.channel instanceof discord.DMChannel)
                 if (msg.member?.hasPermission(command.permissions) !== false)
-                    command.exec(msg, cmd, args, prefix);
+                    command.exec(msg, cmd, args, prefix, lang);
                 else
-                    msg.reply(`you don't have the needed permissions to use this command.`);
+                    msg.reply(dialogs.get(lang).exceptions.not_enough_perms);
             else
-                msg.reply('This command can only be used in nsfw channels');
+                msg.reply(dialogs.get(lang).exceptions.only_in_nsfw);
         }
     });
 })
