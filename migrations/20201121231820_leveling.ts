@@ -5,14 +5,14 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema
         .createTable('global_level', tbl => {
             tbl.string('user').primary();
-            tbl.string('xp').notNullable();
-            tbl.string('level').notNullable();
+            tbl.integer('xp').notNullable();
+            tbl.integer('level').notNullable();
         })
         .createTable('local_level', tbl => {
             tbl.string('user').notNullable();
             tbl.string('guild').notNullable();
-            tbl.string('xp').notNullable();
-            tbl.string('level').notNullable();
+            tbl.integer('xp').notNullable();
+            tbl.integer('level').notNullable();
             tbl.primary(['user', 'guild'])
         })
         .createTable('level_announce_channel', tbl => {

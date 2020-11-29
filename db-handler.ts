@@ -7,6 +7,7 @@ interface GuildPrefixData{
 }
 
 //TODO: add ban_log_channel, kick_log_channel, msg_log_channel
+//TODO: add level_announce_channel
 
 /**
  * @param id guild id
@@ -39,4 +40,44 @@ export function findPrefix(id: string): Promise<GuildPrefixData|undefined>{
  */
 export function changePrefix(id: string, prefix: string){
     return db('guild_prefix').where({id}).update({prefix});
+}
+
+export function insertLocalLevel(user: string, guild: string, xp: number, level: number){
+    return db('local_level').insert({user, guild, xp, level});
+}
+
+export function removeLocalLevel(user: string, guild: string){
+    return db('local_level').where({user, guild}).delete();
+}
+
+export function findLocalLevel(user: string, guild: string){
+    return db('local_level').where({user, guild}).first();
+}
+
+export function changeLocalLevel(user: string, guild: string, xp: number, level: number){
+    return db('local_level').where({user, guild}).update({xp, level});
+}
+
+export function allLocalLevel(){
+    return db('local_level');
+}
+
+export function insertGlobalLevel(user: string, xp: number, level: number){
+    return db('global_level').insert({user, xp, level});
+}
+
+export function removeGlobalLevel(user: string){
+    return db('global_level').where({user}).delete();
+}
+
+export function findGlobalLevel(user: string){
+    return db('global_level').where({user}).first();
+}
+
+export function changeGlobalLevel(user: string, xp: number, level: number){
+    return db('global_level').where({user}).update({xp, level});
+}
+
+export function allGlobalLevel(){
+    return db('global_level');
 }
